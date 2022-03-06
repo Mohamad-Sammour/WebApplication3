@@ -1,0 +1,176 @@
+﻿@model IEnumerable<WebApplication3.Models.Meals>
+@{
+    ViewBag.Title = "Home";
+}
+
+
+<!-- ======= Why Us Section ======= -->
+<section id="why-us" class="why-us">
+    <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+            <h2>All Categories</h2>
+            <p>Choose Category</p>
+        </div>
+
+        <h2 id="succ" class="alert alert-dark">
+            @Session["success"]
+        </h2>
+        <div class="row">
+            
+
+            @{
+                var data = ViewData["cats"]
+                    as IEnumerable<WebApplication3.Models.Meals>;
+                var cat = (from d in data // LINQ
+                           select d.category).Distinct();
+
+                foreach (var c in cat)
+                {
+                    <div class="col-lg-4 mt-4 mt-lg-0">
+                        <div class="box" data-aos="zoom-in" data-aos-delay="300">
+                            <span>
+                                @Html.ActionLink("Show All Meals", "Details",
+                           "Customer", new { category = c }, null)
+                            </span>@*, new { @class="bootstrap class" }*@
+                            <h4>@c</h4>
+                        </div>
+                    </div>
+                }
+
+            }
+        </div>
+
+    </div>
+</section><!-- End Why Us Section -->
+<!-- ======= Menu Section ======= -->
+
+<section id="menu" class="menu section-bg">
+    <div class="container" data-aos="fade-up">
+
+        <div class="section-title">
+            <h2>Menu</h2>
+            <p>Show Meals</p>
+        </div>
+
+
+        <div class="row menu-container" data-aos="fade-up" data-aos-delay="200">
+
+            @{
+                if (Model != null)
+                {
+                    foreach (var m in Model)
+                    {
+                        <div class="col-lg-6 menu-item filter-starters">
+                            <img src="~/Upload/@m.image" class="menu-img" alt="">
+                            <div class="menu-content">
+                                <a href="#">@m.Name</a><span>@m.prics</span>
+                            </div>
+                            <div class="menu-ingredients">
+                                Lorem, deren, trataro, filede, nerada
+
+                                <br />
+                                @Html.ActionLink("AddToCart", "AddToCart", "Customer", new { id = m.id }, null);
+                                <!-- ======= go to customer controller and find action method name is (AddToCart) and null statement means there is no bootstrap ======= -->
+
+                            </div>
+                        </div>
+                    }
+                }
+            }
+
+
+        </div>
+        <table class="table" style="color:white">
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Sub Price</th>
+                <th>Action</th>
+            </tr>
+            @{
+                var cm = ViewData["CartMeal"] as IEnumerable<WebApplication3.ViewModels.MealCartVM>;
+                var total = 0.0;
+                foreach (var item in cm)
+                {
+                    <tr id="tab">
+                        <td>@item.Meals.Name</td>
+                        <td>@item.Meals.prics</td>
+                        <td>@item.Carts.Quantity</td>
+                        <td>@item.Meals.Name</td>
+                        <td>
+                            @{var subPrice = item.Meals.prics * item.Carts.Quantity;
+                                total = total + subPrice;
+                            }
+                        </td>
+                        <td>@subPrice</td>
+                        <td>@Html.ActionLink("Delete", "DeleteItem", "Customer", new { id = item.Meals.id }, null)</td>
+
+                    </tr>
+                }
+            }
+
+        </table>
+        <center>
+            <h1> <span>The Total Is  @total JOD</span> </h1>
+
+            @*@using (Html.BeginForm("Buy", "BuyCarts", FormMethod.Post))
+             {
+                     (using causes the reload)
+                 <input id="btnbuy" type="submit" value="Buy Now" class="btn btn-danger btn-lg" />
+             }*@
+            
+            <input id="btnbuy" type="button" value="Buy Now" class="btn btn-danger btn-lg" />
+
+
+
+        </center>
+    </div>
+</section><!-- End Menu Section -->
+<!-- ======= Specials Section ======= -->
+
+@section scripts 
+
+    {
+<script>
+
+    $(document).ready(function () //excute the function after the program finsh loading
+    {
+        $("#succ").hide();
+        /* alert("s"); we wrote it to test JS if does work or not */
+        
+
+        $("#btnbuy").click(function () {
+            /* alert("test");  we wrote it to test JS if does work or not*/
+
+            /*$("#succ").show();*/ // there something missed the button doesnt work when i click on it , 
+            //because type(submit mean the page must reload) then we need to convert the submit type to normal btn
+            $.ajax
+                (
+                    {
+                        url: "/BuyCarts/Buy",
+                        type: "POST",
+                        success: function ()
+                        {
+                            
+                            if (confirm("Are You Sure Buy It"))
+                            {
+                                $("#succ").show();
+                                //$("#tab").empty(); // there is error cause dont delete all item in cart and return total price to zero 
+                                $("table #tab").remove();
+                                $("span").html(0);
+
+                            }
+
+                        } 
+
+                    }
+                );
+
+        });
+
+    });
+
+</script>
+}

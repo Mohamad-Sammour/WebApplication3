@@ -1,0 +1,36 @@
+﻿@model WebApplication3.Models.Meals
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<section id="about" class="about">
+    <div class="container" data-aos="fade-up">
+
+
+        <div class="row">
+            <div class="col-lg-8 order-1 order-lg-2" data-aos="zoom-in" data-aos-delay="100">
+                <div class="about-img">
+                    <img src="~/Upload/@Html.DisplayFor(model => model.image)" alt="">
+                </div>
+            </div>
+            <div class="col-lg-4 pt-4 pt-lg-0 order-2 order-lg-1 content">
+                <h3>Meal Name: @Html.DisplayFor(model => model.Name)</h3>
+                <p class="fst-italic">
+                   Proce: @Html.DisplayFor(model => model.prics) JOD
+                </p> 
+                <p>
+                  Category:  @Html.DisplayFor(model => model.category)
+                </p>
+            </div>
+        </div>
+
+    </div>
+</section><!-- End About Section -->
+
+
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.id }) |
+    @Html.ActionLink("Back to List", "list")
+</p>
